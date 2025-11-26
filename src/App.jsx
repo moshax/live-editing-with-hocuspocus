@@ -14,9 +14,8 @@ export default function App( docId, userName) {
       background: '#f5f5f7',
     }}>
       <p class="alert alert-primary" style={{ marginBottom: '0.25rem' }}>
-      هذا محرر تعاوني يسمح لعدة أشخاص بالكتابة، والتعديل، ومشاركة
-      التعليقات في نفس المستند في الوقت الحقيقي. كل مستخدم يظهر
-      بلون مختلف، ويمكنك رؤية المؤشر وتغييرات الآخرين فور حدوثها. كما أن التعديلات يتم حفظها اليا بشكل تلقائي.
+        This collaborative editor allows multiple people to write, edit, and share comments on the same document in real time. Each user appears in a different color, 
+        and you can see the cursor and others' changes as they happen. Edits are also saved automatically.
     </p>
 
       <div style={{
@@ -29,6 +28,9 @@ export default function App( docId, userName) {
       }}>
         <CollaborativeEditor docId={docId} userName={userName} />
       </div>
+       <p class="alert alert-primary" style={{ marginBottom: '0.25rem' }}>
+        Implemented at <a href="https://2ooly.com">2ooly.com</a>.
+    </p>
     </div>
   )
 }
