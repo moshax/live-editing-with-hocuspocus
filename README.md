@@ -1,5 +1,7 @@
 # Live Editing with Hocuspocus
 
+[Live Demo](https://2ooly.com/live-editor-demo/)
+
 A collaborative rich-text editor built with React, Vite, Tiptap, and Yjs. It connects to a Hocuspocus backend for real-time document sync, shared cursors, and live comments so multiple users can edit together.
 
 ## Features
