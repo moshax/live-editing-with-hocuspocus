@@ -1,16 +1,71 @@
-# React + Vite
+# Live Editing with Hocuspocus
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A collaborative rich-text editor built with React, Vite, Tiptap, and Yjs. It connects to a Hocuspocus backend for real-time document sync, shared cursors, and live comments so multiple users can edit together.
 
-Currently, two official plugins are available:
+## Features
+- Real-time collaboration powered by Yjs and Hocuspocus (shared cursors and presence colors)
+- Rich text formatting (headings, lists, bold/italic/underline, links, images, highlights, text alignment)
+- Inline comments with the ability to clear all comment markers across the document
+- Arabic-first UI copy suitable for educational demos
+- Configurable document ID and username via the global `window.EditorConfig` object
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Prerequisites
+- Node.js 18 or newer
+- npm (bundled with Node.js)
 
-## React Compiler
+## Local development
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the dev server:
+   ```bash
+   npm run dev
+   ```
+3. Open the printed URL (defaults to `http://localhost:5173`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Configuration
+- The Hocuspocus WebSocket endpoint is set inside [`src/CollaborativeEditor.jsx`](src/CollaborativeEditor.jsx) (`url: 'wss://2ooly.com/'`). Update it to point to your own Hocuspocus server when self-hosting.
+- Document metadata can be provided before loading the bundle:
+  ```html
+  <script>
+    window.EditorConfig = {
+      docId: 'my-shared-doc',
+      userName: 'Student Name'
+    }
+  </script>
+  <script type="module" src="/src/main.jsx"></script>
+  ```
+  If omitted, the app falls back to sensible defaults.
 
-## Expanding the ESLint configuration
+## Building for production
+```bash
+npm run build
+npm run preview  # Optional: serve the production build locally
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Docker setup
+You can containerize the app with a multi-stage build (Node for compilation, Nginx for static hosting). Save the following as `Dockerfile` in the project root:
+
+```Dockerfile
+# Build stage
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Runtime stage
+FROM nginx:1.27-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+Build and run the image:
+```bash
+docker build -t hocuspocus-editor .
+docker run --rm -p 4173:80 hocuspocus-editor
+```
+Then visit `http://localhost:4173` to use the editor. Update the Hocuspocus URL in `src/CollaborativeEditor.jsx` before building if you want the container to connect to your own server.
