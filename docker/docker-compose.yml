@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  hocuspocus:
+    build: .
+    ports:
+      - "1234:1234"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://hocuspocus:your_password@database:5432/hocuspocus
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=hocuspocus
+      - POSTGRES_USER=hocuspocus
+      - POSTGRES_PASSWORD=M0sh@x
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
